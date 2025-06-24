@@ -8,14 +8,40 @@ services:
       - "4000-4010:4000-4010"
       - "3001:3001"
     volumes:
-      - hl-data:/home/hluser/hl
-      - ./override_gossip_config.json:/home/hluser/override_gossip_config.json
+      # Use bind mount for better I/O performance
+      - ./hl-data:/home/hluser/hl:rw
+      - ./override_gossip_config.json:/home/hluser/override_gossip_config.json:ro
     command: ["--write-order-statuses", "--disable-output-file-buffering"]
+    # Performance optimizations
+    network_mode: host
+    ipc: host
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+      memlock:
+        soft: -1
+        hard: -1
+    # CPU and memory optimizations
+    cpu_count: 4
+    mem_limit: 20g
+    memswap_limit: 20g
+    mem_swappiness: 0
+    # Reduce container overhead
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+    
   pruner:
     restart: unless-stopped
     build: ./pruner
     volumes:
-      - hl-data:/home/hluser/hl
+      - ./hl-data:/home/hluser/hl:rw
+    # Run with lower priority
+    cpu_shares: 256
+    
 volumes:
   hl-data:
     driver: local
