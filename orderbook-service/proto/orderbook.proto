@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package orderbook;
+
+service OrderbookService {
+  // Stream L2 orderbook snapshots for subscribed markets
+  rpc SubscribeOrderbook(SubscribeRequest) returns (stream OrderbookSnapshot);
+  
+  // Get current orderbook snapshot
+  rpc GetOrderbook(GetOrderbookRequest) returns (OrderbookSnapshot);
+  
+  // Get market info
+  rpc GetMarkets(GetMarketsRequest) returns (GetMarketsResponse);
+}
+
+message SubscribeRequest {
+  repeated uint32 market_ids = 1;
+  uint32 depth = 2; // Max depth for each side (0 = full book)
+  uint64 update_interval_ms = 3; // Min time between updates (0 = real-time)
+}
+
+message GetOrderbookRequest {
+  uint32 market_id = 1;
+  uint32 depth = 2; // Max depth for each side (0 = full book)
+}
+
+message GetMarketsRequest {}
+
+message GetMarketsResponse {
+  repeated MarketInfo markets = 1;
+}
+
+message MarketInfo {
+  uint32 market_id = 1;
+  string symbol = 2;
+  bool active = 3;
+}
+
+message OrderbookSnapshot {
+  uint32 market_id = 1;
+  string symbol = 2;
+  uint64 sequence = 3;
+  uint64 timestamp_us = 4;
+  repeated PriceLevel bids = 5;
+  repeated PriceLevel asks = 6;
+}
+
+message PriceLevel {
+  double price = 1;
+  double quantity = 2;
+  uint32 order_count = 3;
+}
+
+message Order {
+  uint64 order_id = 1;
+  double price = 2;
+  double size = 3;
+  bool is_buy = 4;
+  uint64 timestamp_us = 5;
+}

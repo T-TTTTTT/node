@@ -1,0 +1,55 @@
+# Build artifacts
+target/
+*.so
+*.o
+*.a
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+.env
+venv/
+env/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+resource_monitor_*.json
+resource_plot_*.png
+stress_test_results.log
+
+# Test outputs
+test_*.log
+*.out
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data files
+order_statuses.txt
+*.dat
+*.bin
+
+# Compiled protobuf
+*_pb2.py
+*_pb2_grpc.py
+*.pb.go
+*.pb.cc
+*.pb.h
+
+# Backup files
+*.bak
+*~
+
+# Core dumps
+core.*
